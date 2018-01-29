@@ -1,0 +1,14 @@
+runtime: go
+api_version: go1.8
+
+handlers:
+- url: /api/admin/.*
+  script: _go_app
+  secure: always
+  login: admin
+- url: /.*
+  script: _go_app
+  secure: always
+
+skip_files:
+- vendor/
