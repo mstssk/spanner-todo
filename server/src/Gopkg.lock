@@ -2,6 +2,21 @@
 
 
 [[projects]]
+  name = "github.com/favclip/golidator"
+  packages = ["."]
+  revision = "f8a22a68c32005c88762ff41a4139950b49263a9"
+  version = "v2.0.1"
+
+[[projects]]
+  name = "github.com/favclip/ucon"
+  packages = [
+    ".",
+    "swagger"
+  ]
+  revision = "ccb694c2d08eb1e9d120a7b262b13ffc15bafb42"
+  version = "v2.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/golang/lint"
   packages = [
@@ -54,6 +69,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "42347526a007e7558637758a092155683281b94cde16a4e9af655f13ac880fa2"
+  inputs-digest = "bb5becf8de5f411dbfe39520d4f9d75c67c8be1da17950a7eac2ac944033a0f9"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -6,13 +6,30 @@ import (
 	"net/http"
 	"runtime"
 
+	"github.com/favclip/ucon"
+	"github.com/favclip/ucon/swagger"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )
 
 func init() {
-	http.HandleFunc("/api/admin/health", handleAPIHealth)
-	http.HandleFunc("/", handler)
+
+	ucon.Middleware(UseAppengineContext)
+	ucon.Orthodox()
+	ucon.Middleware(swagger.RequestValidator())
+
+	swPlugin := swagger.NewPlugin(&swagger.Options{
+		Object: &swagger.Object{
+			Info: &swagger.Info{Title: "spanner-todo", Version: "v1"},
+		},
+	})
+	ucon.Plugin(swPlugin)
+
+	ucon.HandleFunc("GET", "/api/admin/health", handleAPIHealth)
+	ucon.HandleFunc("GET", "/", handler)
+
+	ucon.DefaultMux.Prepare()
+	http.Handle("/", ucon.DefaultMux)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
