@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/spanner"
@@ -13,42 +15,53 @@ const databaseName = "projects/sandbox-mstssk/instances/test-todo/databases/test
 
 // Todo is todo
 type Todo struct {
-	TodoID  int64
+	TodoID  string
 	Title   string
+	DueDate spanner.NullDate // YYYY-MM-DD
 	Done    bool
-	DueDate time.Time
 }
+
+/*
+CREATE TABLE Todo (
+	TodoID STRING(MAX) NOT NULL,
+	Done BOOL,
+	DueDate DATE,
+	Title STRING(MAX) NOT NULL,
+) PRIMARY KEY (TodoID)
+*/
 
 // TodoStore manages Todo CRUD operation.
 type TodoStore struct{}
 
 // Insert Todo
-func (s TodoStore) Insert(c context.Context, todo Todo) (Todo, error) {
+func (s TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
 
+	if todo.TodoID != "" {
+		return nil, errors.New("Shoud not set TodoID")
+	}
+
+	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする
+	todo.TodoID = Reverse(strings.Replace(time.Now().Format("20060102150405.000000000"), ".", "", 1))
+
+	start := time.Now()
+
+	m, err := spanner.InsertStruct("Todo", todo)
+	if err != nil {
+		return nil, err
+	}
 	client, err := spanner.NewClient(c, databaseName)
 	if err != nil {
-		return Todo{}, err
+		return nil, err
 	}
 	defer client.Close()
-
-	stmt := spanner.Statement{SQL: "SELECT 1"}
-	iter := client.Single().Query(c, stmt)
-	defer iter.Stop()
-
-	row, err := iter.Next()
+	ts, err := client.Apply(c, []*spanner.Mutation{m})
 	if err != nil {
-		log.Errorf(c, "Query failed with %v", err.Error())
-		return Todo{}, err
+		return nil, err
 	}
+	log.Debugf(c, "commitTimestamp: %v", ts)
+	log.Debugf(c, "%.3fs", time.Now().Sub(start).Seconds())
 
-	var i int64
-	if row.Columns(&i) != nil {
-		log.Errorf(c, "Failed to parse row %v", err.Error())
-		return Todo{}, err
-	}
-	log.Infof(c, "Got value %v\n", i)
-
-	return Todo{}, nil
+	return todo, nil
 }
 
 // Get Todo

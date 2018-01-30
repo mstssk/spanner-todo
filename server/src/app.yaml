@@ -9,6 +9,7 @@ handlers:
 - url: /.*
   script: _go_app
   secure: always
+  login: admin
 
 nobuild_files:
 - vendor

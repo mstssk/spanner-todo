@@ -27,11 +27,14 @@ func init() {
 	ucon.Plugin(swPlugin)
 
 	ucon.HandleFunc("GET", "/api/admin/test", func(c context.Context) error {
+		todo := Todo{Title: "test"}
 		s := TodoStore{}
-		_, err := s.Insert(c, Todo{})
+		newTodo, err := s.Insert(c, &todo)
 		if err != nil {
 			return err
 		}
+		log.Debugf(c, "%#v", todo)
+		log.Debugf(c, "%#v", newTodo)
 		return nil
 	})
 	ucon.HandleFunc("GET", "/api/admin/health", handleAPIHealth)
