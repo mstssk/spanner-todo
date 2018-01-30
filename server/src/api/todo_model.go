@@ -2,11 +2,10 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"time"
 
 	"cloud.google.com/go/spanner"
+	"google.golang.org/appengine/log"
 )
 
 // "projects/your-project-id/instances/your-instance-id/databases/your-database-id"
@@ -38,14 +37,16 @@ func (s TodoStore) Insert(c context.Context, todo Todo) (Todo, error) {
 
 	row, err := iter.Next()
 	if err != nil {
-		log.Fatalf("Query failed with %v", err)
+		log.Errorf(c, "Query failed with %v", err.Error())
+		return Todo{}, err
 	}
 
 	var i int64
 	if row.Columns(&i) != nil {
-		log.Fatalf("Failed to parse row %v", err)
+		log.Errorf(c, "Failed to parse row %v", err.Error())
+		return Todo{}, err
 	}
-	fmt.Printf("Got value %v\n", i)
+	log.Infof(c, "Got value %v\n", i)
 
 	return Todo{}, nil
 }

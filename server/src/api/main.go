@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -25,6 +26,14 @@ func init() {
 	})
 	ucon.Plugin(swPlugin)
 
+	ucon.HandleFunc("GET", "/api/admin/test", func(c context.Context) error {
+		s := TodoStore{}
+		_, err := s.Insert(c, Todo{})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	ucon.HandleFunc("GET", "/api/admin/health", handleAPIHealth)
 	ucon.HandleFunc("GET", "/", handler)
 
