@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/mstssk/spanner-todo
+    docker:
+      - image: vvakame/circleci-gaego
+        environment:
+          TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+    steps:
+      - checkout
+
+      # setup
+      - run: gcloud version
+      # - run: gcloud --quiet components update --version 186.0.0
+      # - run: rm -rf /work/go_appengine
+      # - run: curl -o /work/go_appengine_sdk_linux_amd64.zip https://storage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-1.9.58.zip
+      # - run: unzip -q -d /work /work/go_appengine_sdk_linux_amd64.zip
+
+      # dependencies
+      - run:
+          name: Install api dependencies
+          command: ./setup.sh
+          working_directory: ./server
+
+      # test
+      - run:
+          name: Run api test
+          command: ./test.sh
+          working_directory: ./server
+
+      # - deploy:
+      #     name: Deploy to GAE
+      #     command: echo TODO
+      #     working_directory: ./server
