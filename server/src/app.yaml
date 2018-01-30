@@ -10,5 +10,8 @@ handlers:
   script: _go_app
   secure: always
 
+nobuild_files:
+- vendor
+
 skip_files:
-- vendor/
+- vendor
