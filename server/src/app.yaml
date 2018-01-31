@@ -2,6 +2,10 @@ runtime: go
 api_version: go1.8
 
 handlers:
+- url: /swagger-ui/(.*)
+  script: _go_app
+  secure: always
+  login: admin
 - url: /api/admin/.*
   script: _go_app
   secure: always
@@ -13,6 +17,7 @@ handlers:
 
 nobuild_files:
 - vendor
+- api/swagger-ui
 
 skip_files:
 - vendor

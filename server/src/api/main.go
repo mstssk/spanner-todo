@@ -26,6 +26,11 @@ func init() {
 	})
 	ucon.Plugin(swPlugin)
 
+	ucon.HandleFunc("GET", "/swagger-ui/", func(w http.ResponseWriter, r *http.Request, c context.Context) {
+		localPath := "./api/swagger-ui/" + r.URL.Path[len("/swagger-ui/"):]
+		http.ServeFile(w, r, localPath)
+	})
+
 	ucon.HandleFunc("GET", "/api/admin/test", func(c context.Context) error {
 		todo := Todo{Title: "test"}
 		s := TodoStore{}

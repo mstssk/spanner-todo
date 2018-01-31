@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/mstssk/spanner-todo/issues"
   },
-  "homepage": "https://github.com/mstssk/spanner-todo#readme"
+  "homepage": "https://github.com/mstssk/spanner-todo#readme",
+  "devDependencies": {
+    "swagger-ui-dist": "^3.9.3"
+  }
 }
