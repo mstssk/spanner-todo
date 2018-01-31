@@ -1,3 +1,5 @@
 vendor/
 build-cmd/
 swagger-ui/
+
+model_json.go

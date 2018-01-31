@@ -16,10 +16,22 @@
   version = "v0.18.0"
 
 [[projects]]
+  name = "github.com/favclip/genbase"
+  packages = ["."]
+  revision = "33e3f4f43761221e7ef1f0be35bad3711ae26cbd"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/favclip/golidator"
   packages = ["."]
   revision = "f8a22a68c32005c88762ff41a4139950b49263a9"
   version = "v2.0.1"
+
+[[projects]]
+  name = "github.com/favclip/jwg"
+  packages = ["."]
+  revision = "b2b45bf6165a5ec59d00691b6e3af2a21f9d0d7c"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/favclip/ucon"
@@ -204,6 +216,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f96355df33ffea0bb2ce24df6cc15d26ce9bf1393578643d77ac353693fc486e"
+  inputs-digest = "6ff664350dbec4cc0367e37c1b2f895bcd29d4c1be11bfb9ebd2213db4beaf03"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -15,6 +15,7 @@ import (
 const databaseName = "projects/sandbox-mstssk/instances/test-todo/databases/test-todo"
 
 // Todo is todo
+// +jwg
 type Todo struct {
 	TodoID  string
 	Title   string

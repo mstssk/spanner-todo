@@ -1,3 +1,5 @@
+//go:generate jwg -output model_json.go -transcripttag swagger .
+
 package api
 
 import (
