@@ -90,7 +90,7 @@ func (s *TodoStore) Get(c context.Context, id string) (*Todo, error) {
 }
 
 // List Todo
-func (s TodoStore) List(c context.Context) ([]*Todo, error) {
+func (s *TodoStore) List(c context.Context) ([]*Todo, error) {
 	client, err := spanner.NewClient(c, databaseName)
 	if err != nil {
 		return nil, err
