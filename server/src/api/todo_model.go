@@ -34,14 +34,11 @@ CREATE TABLE Todo (
 type TodoStore struct{}
 
 // Insert Todo
-func (s TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
-
+func (s *TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
 	if todo.TodoID != "" {
 		return nil, errors.New("Shoud not set TodoID")
 	}
-
-	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする
-	todo.TodoID = Reverse(strings.Replace(time.Now().Format("20060102150405.000000000"), ".", "", 1))
+	todo.TodoID = s.generateID(time.Now())
 
 	start := time.Now()
 
@@ -64,9 +61,30 @@ func (s TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
 	return todo, nil
 }
 
+func (s *TodoStore) generateID(seed time.Time) string {
+	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする
+	return Reverse(strings.Replace(seed.Format("20060102150405.000000000"), ".", "", 1))
+}
+
 // Get Todo
-func (s TodoStore) Get(c context.Context, id int64) (Todo, error) {
-	return Todo{}, nil
+func (s *TodoStore) Get(c context.Context, id string) (*Todo, error) {
+	client, err := spanner.NewClient(c, databaseName)
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	name, fields := GetStructFieldNames(Todo{})
+	row, err := client.Single().ReadRow(c, name, spanner.Key{id}, fields)
+	if err != nil {
+		return nil, err
+	}
+	todo := &Todo{}
+	err = row.ToStruct(todo)
+	if err != nil {
+		return nil, err
+	}
+	return todo, nil
 }
 
 // List Todo

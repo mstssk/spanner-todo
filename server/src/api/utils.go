@@ -1,6 +1,7 @@
 package api
 
 import (
+	"reflect"
 	"strings"
 )
 
@@ -22,4 +23,15 @@ func Reverse(s string) string {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
 	return string(runes)
+}
+
+// GetStructFieldNames with struct name
+func GetStructFieldNames(in interface{}) (string, []string) {
+	t := reflect.ValueOf(in).Type()
+	name := t.Name()
+	fields := make([]string, 0, t.NumField())
+	for i := 0; i < t.NumField(); i++ {
+		fields = append(fields, t.Field(i).Name)
+	}
+	return name, fields
 }

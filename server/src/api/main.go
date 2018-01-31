@@ -40,6 +40,8 @@ func init() {
 	ucon.HandleFunc("GET", "/api/admin/health", handleAPIHealth)
 	ucon.HandleFunc("GET", "/", handler)
 
+	todoSetup(swPlugin)
+
 	ucon.DefaultMux.Prepare()
 	http.Handle("/", ucon.DefaultMux)
 }

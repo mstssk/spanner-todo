@@ -30,3 +30,28 @@ func TestReverse(t *testing.T) {
 		t.Errorf("ng")
 	}
 }
+
+type TestStruct struct {
+	Foo string
+	Bar int
+}
+
+func TestGetStructFieldNames(t *testing.T) {
+	name, fields := GetStructFieldNames(TestStruct{})
+	if name != "TestStruct" {
+		t.Errorf("ng %v", name)
+	}
+	if len(fields) != 2 {
+		t.Errorf("ng %v", len(fields))
+		for i, v := range fields {
+			t.Errorf("%v %v", i, v)
+		}
+	} else {
+		if fields[0] != "Foo" {
+			t.Errorf("ng %v", fields[0])
+		}
+		if fields[1] != "Bar" {
+			t.Errorf("ng %v", fields[1])
+		}
+	}
+}
