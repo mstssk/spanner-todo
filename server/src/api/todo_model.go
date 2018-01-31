@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -62,7 +63,8 @@ func (s *TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
 }
 
 func (s *TodoStore) generateID(seed time.Time) string {
-	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする
+	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする。相当書き込みが頻繁に行われる場合これでは足りなさそうなので、あくまでとりあえず。
+	// https://cloud.google.com/spanner/docs/whitepapers/optimizing-schema-design#anti-pattern_sequences
 	return Reverse(strings.Replace(seed.Format("20060102150405.000000000"), ".", "", 1))
 }
 
@@ -88,6 +90,31 @@ func (s *TodoStore) Get(c context.Context, id string) (*Todo, error) {
 }
 
 // List Todo
-func (s TodoStore) List(c context.Context) ([]Todo, error) {
-	return nil, nil
+func (s TodoStore) List(c context.Context) ([]*Todo, error) {
+	client, err := spanner.NewClient(c, databaseName)
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	// FIXME 雑実装
+
+	name, _ := GetStructFieldNames(Todo{})
+	stmt := spanner.NewStatement(fmt.Sprintf("SELECT * FROM %s", name))
+	iter := client.ReadOnlyTransaction().Query(c, stmt)
+	todos := make([]*Todo, 0)
+	err = iter.Do(func(row *spanner.Row) error {
+		todo := &Todo{}
+		err := row.ToStruct(todo)
+		if err != nil {
+			return err
+		}
+		todos = append(todos, todo)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return todos, nil
 }
