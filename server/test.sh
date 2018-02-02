@@ -6,7 +6,7 @@ packages=`go list ./src/api/...`
 
 # Apply tools
 export PATH=$(pwd)/build-cmd:$PATH
-which goimports golint
+which goimports golint jwg
 goimports -w ./src/api/
 go tool vet ./src/api/
 golint $packages

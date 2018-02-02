@@ -49,6 +49,7 @@ func (s *todoService) Insert(c context.Context, req *TodoJSON) (*TodoJSON, error
 	return json, nil
 }
 
+// TodoUpdateReq 更新用reqオブジェクト
 type TodoUpdateReq struct {
 	ID int64 `json:"id,string" swagger:",in=path"`
 	TodoJSON
