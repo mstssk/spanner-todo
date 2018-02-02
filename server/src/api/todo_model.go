@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
+	"math/rand"
 	"time"
 
 	"cloud.google.com/go/spanner"
@@ -17,7 +17,7 @@ const databaseName = "projects/sandbox-mstssk/instances/test-todo/databases/test
 // Todo is todo
 // +jwg
 type Todo struct {
-	TodoID  string
+	TodoID  int64
 	Title   string
 	DueDate spanner.NullDate // YYYY-MM-DD
 	Done    bool
@@ -37,7 +37,7 @@ type TodoStore struct{}
 
 // Insert Todo
 func (s *TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
-	if todo.TodoID != "" {
+	if todo.TodoID != 0 {
 		return nil, errors.New("Shoud not set TodoID")
 	}
 	todo.TodoID = s.generateID(time.Now())
@@ -63,10 +63,9 @@ func (s *TodoStore) Insert(c context.Context, todo *Todo) (*Todo, error) {
 	return todo, nil
 }
 
-func (s *TodoStore) generateID(seed time.Time) string {
-	// ナノ秒までのタイムスタンプを逆転させた文字列をIDにする。相当書き込みが頻繁に行われる場合これでは足りなさそうなので、あくまでとりあえず。
+func (s *TodoStore) generateID(seed time.Time) int64 {
 	// https://cloud.google.com/spanner/docs/whitepapers/optimizing-schema-design#anti-pattern_sequences
-	return Reverse(strings.Replace(seed.Format("20060102150405.000000000"), ".", "", 1))
+	return rand.NewSource(seed.UnixNano()).Int63()
 }
 
 // Get Todo
