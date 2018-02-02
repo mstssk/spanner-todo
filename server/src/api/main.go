@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 	"runtime"
+	"strings"
 
 	"github.com/favclip/ucon"
 	"github.com/favclip/ucon/swagger"
@@ -24,6 +26,13 @@ func init() {
 	swPlugin := swagger.NewPlugin(&swagger.Options{
 		Object: &swagger.Object{
 			Info: &swagger.Info{Title: "spanner-todo", Version: "v1"},
+		},
+		DefinitionNameModifier: func(refT reflect.Type, defName string) string {
+			// クライアント側とのやり取り用に自動生成したstruct名の末尾から「JSON」を除去
+			if strings.HasSuffix(defName, "JSON") {
+				return defName[:len(defName)-4]
+			}
+			return defName
 		},
 	})
 	ucon.Plugin(swPlugin)
